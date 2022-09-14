@@ -1,10 +1,12 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
 [ExecuteInEditMode]
 public class TubeRenderer : MonoBehaviour
 {
-	[SerializeField] Vector3[] _positions;
+	[SerializeField] List<Vector3> _positions = new List<Vector3>();
 	[SerializeField] int _sides;
 	[SerializeField] float _radiusOne;
 	[SerializeField] float _radiusTwo;
@@ -54,33 +56,33 @@ public class TubeRenderer : MonoBehaviour
 	{
 		GenerateMesh();
 	}
-
+/*
 	void Start()
 	{
-		Vector3[] pos = {new Vector3(0,0,0), new Vector3(1,1,1)}; 
-		SetPositions(pos);
+		SetPosition(new Vector3(0,0,0));
+		SetPosition(new Vector3(1,1,1));
 	}
-
+*/
 	private void OnValidate()
 	{
 		_sides = Mathf.Max(3, _sides);
 	}
 
-	public void SetPositions(Vector3[] positions)
+	public void SetPosition(Vector3 pos)
 	{
-		_positions = positions;
+		_positions.Add(pos);
 		GenerateMesh();
 	}
 
 	private void GenerateMesh()
 	{
-		if (_mesh == null || _positions == null || _positions.Length <= 1)
+		if (_mesh == null || _positions == null || _positions.Count <= 1)
 		{
 			_mesh = new Mesh();
 			return;
 		}
 
-		var verticesLength = _sides*_positions.Length;
+		var verticesLength = _sides*_positions.Count;
 		if (_vertices == null || _vertices.Length != verticesLength)
 		{
 			_vertices = new Vector3[verticesLength];
@@ -104,7 +106,7 @@ public class TubeRenderer : MonoBehaviour
 
 		var currentVertIndex = 0;
 
-		for (int i = 0; i < _positions.Length; i++)
+		for (int i = 0; i < _positions.Count; i++)
 		{
 			var circle = CalculateCircle(i);
 			foreach (var vertex in circle)
@@ -122,15 +124,15 @@ public class TubeRenderer : MonoBehaviour
 
 	private Vector2[] GenerateUVs()
 	{
-		var uvs = new Vector2[_positions.Length*_sides];
+		var uvs = new Vector2[_positions.Count*_sides];
 
-		for (int segment = 0; segment < _positions.Length; segment++)
+		for (int segment = 0; segment < _positions.Count; segment++)
 		{
 			for (int side = 0; side < _sides; side++)
 			{
 				var vertIndex = (segment * _sides + side);
 				var u = side/(_sides-1f);
-				var v = segment/(_positions.Length-1f);
+				var v = segment/(_positions.Count-1f);
 
 				uvs[vertIndex] = new Vector2(u, v);
 			}
@@ -142,10 +144,10 @@ public class TubeRenderer : MonoBehaviour
 	private int[] GenerateIndices()
 	{
 		// Two triangles and 3 vertices
-		var indices = new int[_positions.Length*_sides*2*3];
+		var indices = new int[_positions.Count*_sides*2*3];
 
 		var currentIndicesIndex = 0;
-		for (int segment = 1; segment < _positions.Length; segment++)
+		for (int segment = 1; segment < _positions.Count; segment++)
 		{
 			for (int side = 0; side < _sides; side++)
 			{
@@ -181,7 +183,7 @@ public class TubeRenderer : MonoBehaviour
 		}
 
 		// If not last index
-		if (index < _positions.Length-1)
+		if (index < _positions.Count-1)
 		{
 			forward += (_positions[index + 1] - _positions[index]).normalized;
 			dirCount++;
@@ -196,7 +198,7 @@ public class TubeRenderer : MonoBehaviour
 		var angle = 0f;
 		var angleStep = (2*Mathf.PI)/_sides;
 
-		var t = index / (_positions.Length-1f);
+		var t = index / (_positions.Count-1f);
 		var radius = _useTwoRadii ? Mathf.Lerp(_radiusOne, _radiusTwo, t) : _radiusOne;
 
 		for (int i = 0; i < _sides; i++)

@@ -58,9 +58,9 @@
                     "name": "",
                     "id": "66588436-39e7-4b8f-85c1-9736b8417bd9",
                     "path": "<XRController>{RightHand}/triggerPressed",
-                    "interactions": "Press(behavior=1)",
+                    "interactions": "Press(pressPoint=0.1,behavior=1)",
                     "processors": "",
-                    "groups": "",
+                    "groups": "VR",
                     "action": "Cancel",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -71,7 +71,7 @@
                     "path": "<XRController>{RightHand}/secondaryButton",
                     "interactions": "Press",
                     "processors": "",
-                    "groups": "",
+                    "groups": "VR",
                     "action": "Reset",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -80,9 +80,9 @@
                     "name": "",
                     "id": "d3e8bad0-bc81-445f-b362-efd0cce6a47c",
                     "path": "<XRController>{RightHand}/primaryButton",
-                    "interactions": "",
+                    "interactions": "Press",
                     "processors": "",
-                    "groups": "",
+                    "groups": "VR",
                     "action": "Save",
                     "isComposite": false,
                     "isPartOfComposite": false

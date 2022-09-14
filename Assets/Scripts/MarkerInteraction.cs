@@ -8,14 +8,19 @@ using System;
 
 public class MarkerInteraction : MonoBehaviour
 {
-    public LineRenderer prefab_line;
-    public List<LineRenderer> lines = new List<LineRenderer>();
-    public LineRenderer line_current;
-    public bool is_triggered;
-    public int num_points;
+    public GameObject prefab_line;
+    public GameObject prefab_endPoint;
+
+    private List<GameObject> lines = new List<GameObject>();
+    private List<GameObject> points = new List<GameObject>();
+    private GameObject line_current;
+    private bool is_triggered;
+    private int num_points;
 
     private List<float[]> data = new List<float[]>();
     private int num_trial;
+    private bool first_flag;
+    private Vector3 curPos;
 
     // Start is called before the first frame update
     void Start()
@@ -23,6 +28,7 @@ public class MarkerInteraction : MonoBehaviour
         is_triggered = false;
         num_points = 0;
         num_trial = 0;
+        first_flag = true;
     }
 
     public void OnReset()
@@ -34,15 +40,22 @@ public class MarkerInteraction : MonoBehaviour
         {
             Destroy(lines[i]);
         }
+        
+        for(int i = 0; i < points.Count; i++)
+        {
+            Destroy(points[i]);
+        }
+    
         lines.Clear();
+        points.Clear();
         data.Clear();
     }
 
     public void OnCreate()
     {
-        //Debug.Log("selected!!");
+        Debug.Log("selected!!");
         int prev = lines.Count;
-        lines.Add(Instantiate(prefab_line, gameObject.transform));
+        lines.Add(Instantiate(prefab_line));
         if(prev + 1 == lines.Count){
             // success
             line_current = lines[prev];
@@ -56,17 +69,17 @@ public class MarkerInteraction : MonoBehaviour
 
     public void OnCancel()
     {
-        //Debug.Log("cleared!!");
+        Debug.Log("cleared!!");
         is_triggered = false;
         num_points = 0;
     }
 
-    void FixedUpdate()
+    void Update()
     {
         if(is_triggered)
         {
             float[] row = new float[7];
-            Vector3 curPos = gameObject.transform.position;
+            curPos = gameObject.transform.position;
 
             row[0] = (float)num_trial;
             row[1] = (float)lines.Count;
@@ -78,9 +91,27 @@ public class MarkerInteraction : MonoBehaviour
 
             data.Add(row);
 
-            line_current.positionCount += 1;
-            line_current.SetPosition(num_points++, curPos);
+            num_points++;
+            line_current.GetComponent<TubeRenderer>().SetPosition(curPos);
+
+            if(first_flag){
+                SetEndPoint(curPos);
+                first_flag = false;
+            }
         }
+        else{
+            if(!first_flag){
+                SetEndPoint(curPos);
+                first_flag = true;
+            }
+        }
+    }
+
+    public void SetEndPoint(Vector3 pos)
+    {
+        GameObject endpoint = Instantiate(prefab_endPoint);
+        endpoint.transform.position = pos;
+        points.Add(endpoint);
     }
 
     public void OnSave()
