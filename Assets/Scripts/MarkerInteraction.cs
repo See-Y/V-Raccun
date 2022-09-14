@@ -40,7 +40,7 @@ public class MarkerInteraction : MonoBehaviour
 
     public void OnCreate()
     {
-        Debug.Log("selected!!");
+        //Debug.Log("selected!!");
         int prev = lines.Count;
         lines.Add(Instantiate(prefab_line, gameObject.transform));
         if(prev + 1 == lines.Count){
@@ -56,7 +56,7 @@ public class MarkerInteraction : MonoBehaviour
 
     public void OnCancel()
     {
-        Debug.Log("cleared!!");
+        //Debug.Log("cleared!!");
         is_triggered = false;
         num_points = 0;
     }
